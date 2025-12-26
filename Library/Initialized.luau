@@ -135,7 +135,7 @@ function Library:Asset(rbx)
 	return rbx
 end
 
-local function NewTemplate(p, t)
+local function NewTemplate(p, t, d)
 	local Template = Instance.new("Frame")
 	local UICorner_1 = Instance.new("UICorner")
 	local UIStroke_1 = Instance.new("UIStroke")
@@ -152,7 +152,7 @@ local function NewTemplate(p, t)
 	Template.BackgroundTransparency = 0.5
 	Template.BorderColor3 = Color3.fromRGB(0,0,0)
 	Template.BorderSizePixel = 0
-	Template.Size = UDim2.new(0.959999979, 0,0, 40)
+	Template.Size = UDim2.new(0.98, 0,0, 40)
 
 	UICorner_1.Parent = Template
 	UICorner_1.CornerRadius = UDim.new(0,3)
@@ -168,8 +168,8 @@ local function NewTemplate(p, t)
 	Text_1.BackgroundTransparency = 1
 	Text_1.BorderColor3 = Color3.fromRGB(0,0,0)
 	Text_1.BorderSizePixel = 0
-	Text_1.Position = UDim2.new(0, 0,0.100000001, 0)
-	Text_1.Size = UDim2.new(0, 111,0, 32)
+	Text_1.Position = UDim2.new(0, 0,0, 0)
+	Text_1.Size = UDim2.new(1, 0,1, 0)
 
 	Title_1.Name = "Title"
 	Title_1.Parent = Text_1
@@ -187,9 +187,33 @@ local function NewTemplate(p, t)
 	Title_1.Text = t
 	Title_1.TextColor3 = Color3.fromRGB(255,255,255)
 	Title_1.TextSize = 14
-	Title_1.TextTransparency = 0.30000001192092896
+	Title_1.TextTransparency = 0.3
 	Title_1.TextWrapped = true
 	Title_1.TextXAlignment = Enum.TextXAlignment.Left
+	Title_1.LayoutOrder = -999
+	
+	if d then
+		local Desc_1 = Instance.new("TextLabel")
+		
+		Desc_1.Name = "Desc"
+		Desc_1.Parent = Text_1
+		Desc_1.BackgroundColor3 = Color3.fromRGB(255,255,255)
+		Desc_1.BackgroundTransparency = 1
+		Desc_1.BorderColor3 = Color3.fromRGB(0,0,0)
+		Desc_1.BorderSizePixel = 0
+		Desc_1.Size = UDim2.new(0, 150,0, 10)
+		Desc_1.FontFace = Font.new(
+			"rbxassetid://12187374537",
+			Enum.FontWeight.Regular,
+			Enum.FontStyle.Normal
+		)
+		Desc_1.RichText = true
+		Desc_1.TextColor3 = Color3.fromRGB(145,145,145)
+		Desc_1.TextSize = 10
+		Desc_1.TextXAlignment = Enum.TextXAlignment.Left
+		Desc_1.TextTruncate = Enum.TextTruncate.AtEnd
+		Desc_1.Text = d
+	end
 
 	UIListLayout_1.Parent = Text_1
 	UIListLayout_1.SortOrder = Enum.SortOrder.LayoutOrder
@@ -198,6 +222,7 @@ local function NewTemplate(p, t)
 	UIPadding_1.Parent = Template
 	UIPadding_1.PaddingLeft = UDim.new(0,12)
 	UIPadding_1.PaddingRight = UDim.new(0,10)
+	UIPadding_1.PaddingBottom = UDim.new(0, 2)
 
 	Scaling_1.Name = "Scaling"
 	Scaling_1.Parent = Template
@@ -556,7 +581,7 @@ function Library:Window(options)
 		Enum.FontStyle.Normal
 	)
 	Title_2.RichText = true
-	Title_2.Text = LocalPlayer.DisplayName
+	Title_2.Text = "Unknow"
 	Title_2.TextColor3 = Color3.fromRGB(255,255,255)
 	Title_2.TextSize = 13
 	Title_2.TextTransparency = 0.15000000596046448
@@ -597,6 +622,22 @@ function Library:Window(options)
 			Desc_2.Text = "@" .. name
 		end
 	end
+	
+	do
+		local name = LocalPlayer.DisplayName
+		local startCount = 2
+		local endCount = 2
+
+		if #name > startCount + endCount then
+			local start = string.sub(name, 1, startCount)
+			local ending = string.sub(name, -endCount)
+			local stars = string.rep("*", #name - startCount - endCount)
+
+			Title_2.Text = start .. stars .. ending
+		else
+			Title_2.Text = name
+		end
+	end
 
 	Desc_2.TextColor3 = Color3.fromRGB(145,145,145)
 	Desc_2.TextSize = 10
@@ -634,7 +675,7 @@ function Library:Window(options)
 
 	UIStroke_1.Parent = Return_1
 	UIStroke_1.Color = Color3.fromRGB(255,255,255)
-	UIStroke_1.Thickness = 1
+	UIStroke_1.Thickness = 0.5
 	UIStroke_1.Transparency = 0.85
 
 	UICorner_2.Parent = Return_1
@@ -864,9 +905,6 @@ function Library:Window(options)
 		local UIListLayout_1 = Instance.new("UIListLayout")
 		local UIPadding_1 = Instance.new("UIPadding")
 		local UIListLayout_2 = Instance.new("UIListLayout")
-		local Right_1 = Instance.new("ScrollingFrame")
-		local UIListLayout_3 = Instance.new("UIListLayout")
-		local UIPadding_2 = Instance.new("UIPadding")
 
 		AddPage.Name = "AddPage"
 		AddPage.Parent = Page_1
@@ -886,7 +924,7 @@ function Library:Window(options)
 		Left_1.BackgroundTransparency = 1
 		Left_1.BorderColor3 = Color3.fromRGB(0,0,0)
 		Left_1.BorderSizePixel = 0
-		Left_1.Size = UDim2.new(0.5, 0,1, 0)
+		Left_1.Size = UDim2.new(1, 0,1, 0)
 		Left_1.ClipsDescendants = true
 		Left_1.AutomaticCanvasSize = Enum.AutomaticSize.None
 		Left_1.BottomImage = "rbxasset://textures/ui/Scroll/scroll-bottom.png"
@@ -903,7 +941,7 @@ function Library:Window(options)
 		Left_1.VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Right
 
 		UIListLayout_1.Parent = Left_1
-		UIListLayout_1.Padding = UDim.new(0, 8)
+		UIListLayout_1.Padding = UDim.new(0, 10)
 		UIListLayout_1.HorizontalAlignment = Enum.HorizontalAlignment.Center
 		UIListLayout_1.SortOrder = Enum.SortOrder.LayoutOrder
 
@@ -915,48 +953,13 @@ function Library:Window(options)
 		UIListLayout_2.FillDirection = Enum.FillDirection.Horizontal
 		UIListLayout_2.SortOrder = Enum.SortOrder.LayoutOrder
 
-		Right_1.Name = "Right"
-		Right_1.Parent = AddPage
-		Right_1.Active = true
-		Right_1.BackgroundColor3 = Color3.fromRGB(255,255,255)
-		Right_1.BackgroundTransparency = 1
-		Right_1.BorderColor3 = Color3.fromRGB(0,0,0)
-		Right_1.BorderSizePixel = 0
-		Right_1.Size = UDim2.new(0.5, 0,1, 0)
-		Right_1.ClipsDescendants = true
-		Right_1.AutomaticCanvasSize = Enum.AutomaticSize.None
-		Right_1.BottomImage = "rbxasset://textures/ui/Scroll/scroll-bottom.png"
-		Right_1.CanvasPosition = Vector2.new(0, 0)
-		Right_1.ElasticBehavior = Enum.ElasticBehavior.WhenScrollable
-		Right_1.HorizontalScrollBarInset = Enum.ScrollBarInset.None
-		Right_1.MidImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
-		Right_1.ScrollBarImageColor3 = Color3.fromRGB(0,0,0)
-		Right_1.ScrollBarImageTransparency = 0
-		Right_1.ScrollBarThickness = 0
-		Right_1.ScrollingDirection = Enum.ScrollingDirection.XY
-		Right_1.TopImage = "rbxasset://textures/ui/Scroll/scroll-top.png"
-		Right_1.VerticalScrollBarInset = Enum.ScrollBarInset.None
-		Right_1.VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Right
-
-		UIListLayout_3.Parent = Right_1
-		UIListLayout_3.Padding = UDim.new(0, 8)
-		UIListLayout_3.HorizontalAlignment = Enum.HorizontalAlignment.Center
-		UIListLayout_3.SortOrder = Enum.SortOrder.LayoutOrder
-
-		UIPadding_2.Parent = Right_1
-		UIPadding_2.PaddingBottom = UDim.new(0,1)
-		UIPadding_2.PaddingTop = UDim.new(0,1)
-
 		local function updateSizes()
 			local scale = UIScale_1.Scale or 1
 			
 			Left_1.CanvasSize = UDim2.new(0, 0, 0, (UIListLayout_1.AbsoluteContentSize.Y + 15) / scale)
-
-			Right_1.CanvasSize = UDim2.new(0, 0, 0, (UIListLayout_3.AbsoluteContentSize.Y + 15) / scale)
 		end
 
 		UIListLayout_1:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateSizes)
-		UIListLayout_3:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateSizes)
 
 		updateSizes()
 
@@ -976,18 +979,6 @@ function Library:Window(options)
 
 		local Section = {}
 
-		local function getside(side)
-			if side == 'l' then
-				return Left_1
-			end
-
-			if side == 'r' then
-				return Right_1
-			end
-
-			return Left_1
-		end
-
 		function Section:Section(options)
 			local Title = options.Title
 			local Side = options.Side
@@ -997,15 +988,14 @@ function Library:Window(options)
 			local UIStroke_1 = Instance.new("UIStroke")
 			local UIListLayout_1 = Instance.new("UIListLayout")
 			local HeadSection_1 = Instance.new("Frame")
-			local Line_1 = Instance.new("Frame")
 			local Title_1 = Instance.new("TextLabel")
 
 			Section.Name = "Section"
-			Section.Parent = getside(Side)
+			Section.Parent = Left_1
 			Section.BackgroundColor3 = Color3.fromRGB(20,20,20)
 			Section.BorderColor3 = Color3.fromRGB(0,0,0)
 			Section.BorderSizePixel = 0
-			Section.Size = UDim2.new(0.949999988, 0,0, 300)
+			Section.Size = UDim2.new(0.95, 0,0, 300)
 
 			UICorner_1.Parent = Section
 			UICorner_1.CornerRadius = UDim.new(0,3)
@@ -1028,6 +1018,7 @@ function Library:Window(options)
 			HeadSection_1.BorderSizePixel = 0
 			HeadSection_1.Size = UDim2.new(1, 0,0, 30)
 
+			local Line_1 = Instance.new("Frame")
 			Line_1.Name = "Line"
 			Line_1.Parent = HeadSection_1
 			Line_1.AnchorPoint = Vector2.new(0, 1)
@@ -1046,7 +1037,7 @@ function Library:Window(options)
 			Title_1.BorderColor3 = Color3.fromRGB(0,0,0)
 			Title_1.BorderSizePixel = 0
 			Title_1.Position = UDim2.new(0.5, 0,0.5, 0)
-			Title_1.Size = UDim2.new(0.899999976, 0,1, 0)
+			Title_1.Size = UDim2.new(0.95, 0,1, 0)
 			Title_1.FontFace = Font.new(
 				"rbxassetid://12187374537",
 				Enum.FontWeight.Medium,
@@ -1056,7 +1047,8 @@ function Library:Window(options)
 			Title_1.Text = Title
 			Title_1.TextColor3 = Color3.fromRGB(255,255,255)
 			Title_1.TextSize = 14
-			Title_1.TextTransparency = 0.15
+			Title_1.TextTransparency = 0.3
+			Title_1.TextXAlignment = Enum.TextXAlignment.Left
 
 			UIListLayout_1:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
 				local scale = UIScale_1.Scale or 1
@@ -1072,7 +1064,7 @@ function Library:Window(options)
 					return ...
 				end)
 
-				local Base = NewTemplate(Section, options.Title or "???")
+				local Base = NewTemplate(Section, options.Title or "???", options.Desc or nil)
 
 				local Button = Library:Button(Base)
 
@@ -1124,6 +1116,7 @@ function Library:Window(options)
 				local function OnChanged(value)
 					if value then 
 						ImageLabel_1.Size = UDim2.new(0.85, 0,0.85, 0)
+						BaseTitle.TextColor3 = Color3.fromRGB(255, 0, 127)
 						Callback(Value)
 						Library:Tween({
 							v = Highligh_1,
@@ -1132,16 +1125,6 @@ function Library:Window(options)
 							d = "Out",
 							g = {
 								BackgroundTransparency = 0
-							}
-						}):Play()
-
-						Library:Tween({
-							v = BaseTitle,
-							t = 0.5,
-							s = "Exponential",
-							d = "Out",
-							g = {
-								TextTransparency = 0.15
 							}
 						}):Play()
 
@@ -1165,16 +1148,8 @@ function Library:Window(options)
 							}
 						}):Play()
 					else
+						BaseTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
 						Callback(Value)
-						Library:Tween({
-							v = BaseTitle,
-							t = 0.5,
-							s = "Exponential",
-							d = "Out",
-							g = {
-								TextTransparency = 0.5
-							}
-						}):Play()
 
 						Library:Tween({
 							v = Highligh_1,
@@ -1230,10 +1205,10 @@ function Library:Window(options)
 
 				Button.Name = "Button"
 				Button.Parent = Section
-				Button.BackgroundColor3 = Color3.fromRGB(206, 0, 103)
+				Button.BackgroundColor3 = Color3.fromRGB(255, 0, 127)
 				Button.BorderColor3 = Color3.fromRGB(0,0,0)
 				Button.BorderSizePixel = 0
-				Button.Size = UDim2.new(0.95, 0,0, 25)
+				Button.Size = UDim2.new(0.98, 0,0, 25)
 
 				UICorner_1.Parent = Button
 				UICorner_1.CornerRadius = UDim.new(0,3)
@@ -1309,7 +1284,7 @@ function Library:Window(options)
 				Slider.BackgroundTransparency = 0.5
 				Slider.BorderColor3 = Color3.fromRGB(0,0,0)
 				Slider.BorderSizePixel = 0
-				Slider.Size = UDim2.new(0.959999979, 0,0, 45)
+				Slider.Size = UDim2.new(0.98, 0,0, 43)
 
 				UICorner_1.Parent = Slider
 				UICorner_1.CornerRadius = UDim.new(0,3)
@@ -1326,7 +1301,7 @@ function Library:Window(options)
 				Text_1.BorderColor3 = Color3.fromRGB(0,0,0)
 				Text_1.BorderSizePixel = 0
 				Text_1.Position = UDim2.new(0, 0,0.0999998748, 0)
-				Text_1.Size = UDim2.new(0, 111,0, 25)
+				Text_1.Size = UDim2.new(0, 111,0, 22)
 
 				Title_1.Name = "Title"
 				Title_1.Parent = Text_1
@@ -1530,7 +1505,7 @@ function Library:Window(options)
 				Template.BackgroundTransparency = 0.5
 				Template.BorderColor3 = Color3.fromRGB(0,0,0)
 				Template.BorderSizePixel = 0
-				Template.Size = UDim2.new(0.95, 0,0, 25)
+				Template.Size = UDim2.new(0.98, 0,0, 25)
 				Template.ClipsDescendants = true
 
 				UICorner_1.Parent = Template
@@ -1571,33 +1546,19 @@ function Library:Window(options)
 				end)
 			end
 
-			function Class:Label(text)
-				local Label = Instance.new("TextLabel")
-
-				Label.Name = "Label"
-				Label.Parent = Section
-				Label.BackgroundColor3 = Color3.fromRGB(255,255,255)
-				Label.BackgroundTransparency = 1
-				Label.AutomaticSize = Enum.AutomaticSize.Y
-				Label.BorderColor3 = Color3.fromRGB(0,0,0)
-				Label.BorderSizePixel = 0
-				Label.Size = UDim2.new(0.9, 0,0, 14)
-				Label.FontFace = Font.new(
-					"rbxassetid://12187374537",
-					Enum.FontWeight.Medium,
-					Enum.FontStyle.Normal
-				)
-				Label.RichText = true
-				Label.Text = tostring(text)
-				Label.TextColor3 = Color3.fromRGB(255,255,255)
-				Label.TextSize = 13
-				Label.TextTransparency = 0.30000001192092896
-				Label.TextWrapped = true
-
+			function Class:Label(options)
+				local Template = NewTemplate(Section, options.Title, options.Desc or nil)
+				local BaseTitle = Template.Text.Title
+				local BaseDesc = Template.Text.Desc
+				
 				local attribute = {}
 
-				function attribute :Change(t)
-					Label.Text = tostring(t)
+				function attribute:Title(t)
+					BaseTitle.Text = tostring(t)
+				end
+
+				function attribute:Sub(t)
+					BaseDesc.Text = tostring(t)
 				end
 
 				return attribute 
@@ -1646,7 +1607,7 @@ function Library:Window(options)
 				Template.BackgroundTransparency = 0.5
 				Template.BorderColor3 = Color3.fromRGB(0,0,0)
 				Template.BorderSizePixel = 0
-				Template.Size = UDim2.new(0.959999979, 0,0, 40)
+				Template.Size = UDim2.new(0.98, 0,0, 40)
 				Template.ClipsDescendants = true
 
 				UICorner_1.Parent = Template
@@ -1663,8 +1624,8 @@ function Library:Window(options)
 				Text_1.BackgroundTransparency = 1
 				Text_1.BorderColor3 = Color3.fromRGB(0,0,0)
 				Text_1.BorderSizePixel = 0
-				Text_1.Position = UDim2.new(0, 0,0.100000001, 0)
-				Text_1.Size = UDim2.new(0, 111,0, 32)
+				Text_1.Position = UDim2.new(0, 0,0, 0)
+				Text_1.Size = UDim2.new(1, 0,1, 0)
 
 				Title_1.Name = "Title"
 				Title_1.Parent = Text_1
@@ -1719,7 +1680,7 @@ function Library:Window(options)
 				Settext()
 
 				UIPadding_1.Parent = Template
-				UIPadding_1.PaddingBottom = UDim.new(0,1)
+				UIPadding_1.PaddingBottom = UDim.new(0,2)
 				UIPadding_1.PaddingLeft = UDim.new(0,12)
 				UIPadding_1.PaddingRight = UDim.new(0,10)
 
@@ -2044,6 +2005,18 @@ function Library:Window(options)
 					Title_1.TextColor3 = Color3.fromRGB(255,255,255)
 					Title_1.TextSize = 13
 					Title_1.TextTransparency = 0.30000001192092896
+					
+					local Line_1 = Instance.new("Frame")
+					Line_1.Name = "Line"
+					Line_1.Parent = AddList
+					Line_1.AnchorPoint = Vector2.new(0, 1)
+					Line_1.BackgroundColor3 = Color3.fromRGB(255,255,255)
+					Line_1.BackgroundTransparency = 0.9300000071525574
+					Line_1.BorderColor3 = Color3.fromRGB(0,0,0)
+					Line_1.BorderSizePixel = 0
+					Line_1.Position = UDim2.new(0, 0,1, 0)
+					Line_1.Size = UDim2.new(1, 0,0, 1)
+					Line_1.ZIndex = 56
 
 					local function OnValue(value)
 						if value then
@@ -2196,5 +2169,55 @@ function Library:Window(options)
 
 	return Window
 end
+
+--local Window = Library:Window({
+--	Title = "Xova's official",
+--	Desc = "Made by s1nve"
+--})
+
+--local Tabs = Window:Tabs({
+--	Title = "Level",
+--	Desc = "Level up",
+--	Icon = 89366688240346
+--})
+
+--local Section = Tabs:Section({
+--	Title = "Section"
+--})
+
+--Section:Label({
+--	Title = "Label",
+--	Desc = "This is Label"
+--})
+
+--Window:Size(Section)
+
+--Section:Toggle({
+--	Title = 'Toggle',
+--	Desc = "This is Toggle",
+--	Value = false,
+--	Callback = print
+--})
+
+--Section:Slider({
+--	Title = "Slider",
+--	Min = 5,
+--	Max = 10,
+--	Value = 7,
+--	Rounding = 0,
+--	Callback = print
+--})
+
+--Section:Textbox({
+--	Text = "Text",
+--	Callback = print
+--})
+
+--Section:Button({
+--	Title = "Button",
+--	Callback = function()
+--		print('Click !')
+--	end,
+--})
 
 return Library
