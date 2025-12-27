@@ -11,6 +11,19 @@ local Module = {}
 local Forces = {}
 
 local Configuration = {}
+local Connections = _ENV.Connections or {} do
+	_ENV.Connections = Connections
+
+	for i = 1, #Connections do
+		Connections[i]:Disconnect()
+	end
+
+	table.clear(Connections)
+end
+
+local function AddConnection(signal, callback)
+	table.insert(Connections, signal:Connect(callback))
+end
 
 Module.Thread = (function()
 	local Thread = {}
@@ -388,6 +401,7 @@ do
 	do
 		Module.NewOptionQueue = NewOptionQueue
 		Module.Configuration = Configuration
+		Module.AddConnect = AddConnection
 		Module.Forces = Forces
 	end
 end
