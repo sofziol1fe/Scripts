@@ -21,10 +21,6 @@ local Connections = _ENV.Connections or {} do
 	table.clear(Connections)
 end
 
-local function AddConnection(signal, callback)
-	table.insert(Connections, signal:Connect(callback))
-end
-
 Module.Thread = (function()
 	local Thread = {}
 	
@@ -398,12 +394,120 @@ do
 		end
 	end
 	
+	local function fontcolors(text, color)
+		if type(text) == "string" and typeof(color) == "Color3" then
+			local r, g, b = math.floor(color.R * 255), math.floor(color.G * 255), math.floor(color.B * 255)
+
+			return string.format('<font color="rgb(%d, %d, %d)">%s</font>', r, g, b, text)
+		end
+
+		return text
+	end
+	
+	local function AddConnection(signal, callback)
+		table.insert(Connections, signal:Connect(callback))
+	end
+	
+	local function AddManager(Plugins)
+		local Manager = Plugins:Tabs({ "Miscillinouse", "Performance, Server, Configs", 125928820284709})
+		
+		local Performance = Plugins:Section(Manager, "Performance") do
+			Plugins:Toggle(Performance, { "3d Rendering [ White Screen ]", "Disables 3D rendering by applying a white overlay, improving performance on low-load mode."}, 'White Screen', nil, function(value)
+				RunService:Set3dRenderingEnabled(if value then false else true)
+			end)
+			
+			Plugins:Button("Low Graphic Quality", function()
+				local Terrain = workspace:FindFirstChildOfClass('Terrain') do
+					Terrain.WaterWaveSize = 0
+					Terrain.WaterWaveSpeed = 0
+					Terrain.WaterReflectance = 0
+					Terrain.WaterTransparency = 0
+					game.Lighting.GlobalShadows = false
+					game.Lighting.FogEnd = 9e9
+					settings().Rendering.QualityLevel = 1
+				end
+			end)
+		end
+		
+		local Server = Plugins:Section(Manager, "Server") do
+			Module.Configs:def('JobId', game.JobId)
+			
+			Module.Server = (function()
+				local server = {}
+
+				function server:Reversed(cursor)
+					local url = `https://games.roblox.com/v1/games/{game.PlaceId}/servers/Public?sortOrder=Asc&limit=100`
+
+					if cursor then
+						url ..= `&cursor={cursor}`
+					end
+
+					return HttpService:JSONDecode(game:HttpGet(url))
+				end
+
+				function server:Rejoin()
+					if #Players:GetPlayers() <= 1 then
+						Players.LocalPlayer:Kick("\nRejoining")
+						wait()
+
+						return TeleportService:Teleport(game.PlaceId, Players.LocalPlayer)
+					end
+
+					return TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, Players.LocalPlayer)
+				end
+
+				function server:Changed()
+					local Server, Next
+
+					return (function(a)
+						repeat
+							local Servers = server:Reversed(a)
+
+							Server = Servers and Servers.data and Servers.data[1]
+							Next = Servers and Servers.nextPageCursor
+						until Server
+
+						if not Server or not Server.id then return end
+						return TeleportService:TeleportToPlaceInstance(game.PlaceId, Server.id, Players.LocalPlayer)
+					end)(Next)
+				end
+
+				function server:Join(id)
+					return TeleportService:TeleportToPlaceInstance(game.PlaceId, id, Players.LocalPlayer)
+				end
+
+				return server
+			end)()
+			
+			Plugins:Textbox(Server, 'JobId')
+
+			Plugins:Button(Server, "Join", function()
+				Module.server:Join(Configuration['JobId'])
+			end)
+
+			Plugins:Button(Server, "Rejoin", function()
+				Module.server:Rejoin()
+			end)
+
+			Plugins:Button(Server, "Change Server", function()
+				Module.server:Changed()
+			end)
+		end
+	end
+	
 	do
 		Module.NewOptionQueue = NewOptionQueue
 		Module.Configuration = Configuration
 		Module.AddConnect = AddConnection
+		Module.AddManager = AddManager 
+		Module.Colors = fontcolors
 		Module.Forces = Forces
 	end
+	
+	AddConnection(Players.LocalPlayer.Idled, function()
+		VirtualUser:CaptureController()
+		VirtualUser:ClickButton2(Vector2.new())
+	end)
 end
 
 return Module
