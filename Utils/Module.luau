@@ -62,7 +62,7 @@ Module.Thread = (function()
 				_ENV.RunningOption, _ENV.RunningMethod = nil, nil
 			end
 
-			while task.wait(0.15) do
+			while task.wait(0.25) do
 				local Success, Response = pcall(GetQueue)
 				_ENV.OnFarm = (not Success and _ENV.OnFarm) or Response
 			end
@@ -482,15 +482,15 @@ do
 			Plugins:Textbox(Server, 'JobId')
 
 			Plugins:Button(Server, "Join", function()
-				Module.server:Join(Configuration['JobId'])
+				Module.Server:Join(Configuration['JobId'])
 			end)
 
 			Plugins:Button(Server, "Rejoin", function()
-				Module.server:Rejoin()
+				Module.Server:Rejoin()
 			end)
 
 			Plugins:Button(Server, "Change Server", function()
-				Module.server:Changed()
+				Module.Server:Changed()
 			end)
 		end
 	end
