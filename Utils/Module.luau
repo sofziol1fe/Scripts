@@ -63,8 +63,7 @@ Module.Thread = (function()
 			end
 
 			while task.wait(0) do
-				local Success, Response = pcall(GetQueue)
-				_ENV.OnFarm = (not Success and _ENV.OnFarm) or Response
+				_ENV.OnFarm = if GetQueue() then true else false
 			end
 		end)
 
@@ -364,8 +363,7 @@ local Enabled = _ENV.ENABLED_OPTIONS or setmetatable({}, {
 
 		if not Enabled_Toggle_Debounce then
 			Enabled_Toggle_Debounce = false
-
-			task.delay(0.2, UpdateEnabledOptions)
+			task.spawn(UpdateEnabledOptions)
 		end
 	end,
 	__index = clonedEnabled
@@ -409,7 +407,7 @@ do
 	end
 	
 	local function AddManager(Plugins)
-		local Manager = Plugins:Tabs({ "Miscillinouse", "Miscillinouse Category", 125928820284709})
+		local Manager = Plugins:Tabs({ "Miscillinouse", "Performance, Server, Configs", 125928820284709})
 		
 		local Performance = Plugins:Section(Manager, "Performance") do
 			Plugins:Toggle(Performance, { "3d Rendering [ White Screen ]", "Disables 3D rendering by applying a white overlay, improving performance on low-load mode."}, 'White Screen', nil, function(value)
