@@ -62,7 +62,7 @@ Module.Thread = (function()
 				_ENV.RunningOption, _ENV.RunningMethod = nil, nil
 			end
 
-			while task.wait(0.25) do
+			while task.wait(0.15) do
 				local Success, Response = pcall(GetQueue)
 				_ENV.OnFarm = (not Success and _ENV.OnFarm) or Response
 			end
@@ -416,7 +416,7 @@ do
 				RunService:Set3dRenderingEnabled(if value then false else true)
 			end)
 			
-			Plugins:Button("Low Graphic Quality", function()
+			Plugins:Button(Performance, "Low Graphic Quality", function()
 				local Terrain = workspace:FindFirstChildOfClass('Terrain') do
 					Terrain.WaterWaveSize = 0
 					Terrain.WaterWaveSpeed = 0
