@@ -1,1 +1,395 @@
-return nil
+local _ENV = (getgenv or getrenv or getfenv)()
+
+local TweenService = game:GetService("TweenService")
+local HttpService = game:GetService('HttpService')
+local RunService = game:GetService('RunService')
+local Players = game:GetService('Players')
+local VirtualUser = game:GetService('VirtualUser')
+local TeleportService = game:GetService('TeleportService')
+
+local Module = {}
+local Forces = {}
+
+local Configuration = {}
+
+Module.Thread = (function()
+	local Thread = {}
+	
+	local function ShowErrorMessage(ErrorMessage)
+		_ENV.ISLOADED = false
+		_ENV.OnFarm = false
+
+		local text = (`redz-Hub error [ { _ENV.RunningOption or "Null" } ] { ErrorMessage }`)
+
+		if _ENV.error_message then
+			_ENV.error_message.Text ..= `\n\n{ text }`
+			
+			return nil
+		end
+
+		local Message = Instance.new("Message", workspace) do
+			_ENV.error_message = Message
+			Message.Text = text
+		end
+	end
+
+	function Thread.RunQueue(Options)
+		local Success, ErrorMessage = pcall(function()
+			local function GetQueue()
+				for _, Option in Options do
+					_ENV.RunningOption = Option.Name
+					
+					local Method = Option.Function()
+
+					if Method then
+						if type(Method) == "string" then
+							_ENV.RunningMethod = Method
+						end
+						
+						return Method
+					end
+				end
+
+				_ENV.RunningOption, _ENV.RunningMethod = nil, nil
+			end
+
+			while task.wait(0.25) do
+				local Success, Response = pcall(GetQueue)
+				_ENV.OnFarm = (not Success and _ENV.OnFarm) or Response
+			end
+		end)
+
+		ShowErrorMessage(ErrorMessage)
+	end
+
+	return Thread
+end)()
+
+Module.Configs = (function()
+	local Configs = {
+		folder = "Xova",
+		Data = {}
+	}
+
+	local function build()
+		local paths = {
+			Configs.folder,
+			Configs.folder .. "/settings"
+		}
+
+		for i = 1, #paths do
+			local str = paths[i]
+
+			if not isfolder(str) then
+				makefolder(str)
+			end
+		end
+	end
+
+	local fullPath = Configs.folder .. "/settings/" .. game.PlaceId .. ".json"
+
+	function Configs:def(index, value)
+		if Configuration[index] == nil then
+			Configuration[index] = value
+		end
+	end
+
+	function Configs:save(index, value)
+		if index ~= nil then
+			Configuration[index] = value
+		end
+
+		if not isfolder(Configs.folder) then
+			makefolder(Configs.folder)
+		end
+
+		if not isfolder(Configs.folder .. "/settings") then
+			makefolder(Configs.folder .. "/settings")
+		end
+
+		writefile(fullPath, HttpService:JSONEncode(Configuration))
+	end
+
+	function Configs:load()
+		if not isfile(fullPath) then
+			Configs:save()
+		end
+
+		return HttpService:JSONDecode(readfile(fullPath))
+	end
+
+	function Configs:path()
+		return fullPath
+	end
+
+	do
+		build()
+		Configs:def('Initialized', true)
+	end
+
+	return Configs
+end)()
+
+Module.Importer = (function()
+	local Importer, urls = {}, {}
+	
+	urls.Owner = "https://raw.githubusercontent.com/sofziol1fe/"
+	urls.Repository = urls.Owner .. "Scripts/refs/heads/main/"
+	urls.Utils = urls.Repository .. "Utils/"
+	
+	local function CreateMessageError(Text)
+		_ENV.ISLOADED = nil
+		_ENV.OnFarm = false
+
+		local Message = Instance.new("Message", workspace)
+		Message.Text = string.gsub(Text, urls.Owner, "")
+		_ENV.error_message = Message
+
+		error(Text, 2)
+	end
+	
+	local function formatUrl(Url)
+		for key, path in urls do
+			if Url:find("{" .. key .. "}") then
+				return Url:gsub("{" .. key .. "}", path)
+			end
+		end
+
+		return Url
+	end
+
+	function Importer.get(Url)
+		local success, response = pcall(function()
+			return game:HttpGet(formatUrl(Url))
+		end)
+
+		if success then
+			return response
+		else
+			CreateMessageError(`[1] [{ identifyexecutor() }] failed to get http/url/raw: { Url }\n>>{ response }<<`)
+		end
+	end
+
+	function Importer.load(Url, concat)
+		local raw = Importer.get(Url) .. (if concat then concat else "")
+		local runFunction, errorText = loadstring(raw)
+
+		if type(runFunction) ~= "function" then
+			CreateMessageError(`[2] [{ identifyexecutor() }] sintax error: { Url }\n>>{ errorText }<<`)
+		else
+			return runFunction
+		end
+	end
+	
+	return Importer
+end)()
+
+Module.TweenCreator = function()
+	local TweenCreator = {}
+	TweenCreator.__index = TweenCreator
+
+	local tweens = {}
+	local EasingStyle = Enum.EasingStyle.Linear
+
+	function TweenCreator.new(obj, time, prop, value)
+		local self = setmetatable({}, TweenCreator)
+
+		self.tween = TweenService:Create(obj, TweenInfo.new(time, EasingStyle), { [prop] = value })
+		self.tween:Play()
+		self.value = value
+		self.object = obj
+
+		if tweens[obj] then
+			tweens[obj]:destroy()
+		end
+
+		tweens[obj] = self
+		return self
+	end
+
+	function TweenCreator:destroy()
+		self.tween:Pause()
+		self.tween:Destroy()
+
+		tweens[self.object] = nil
+		setmetatable(self, nil)
+	end
+
+	function TweenCreator:stopTween(obj)
+		if obj and tweens[obj] then
+			tweens[obj]:destroy()
+		end
+	end
+
+	return TweenCreator
+end
+
+Module.Plugins = function(EnabledOptions, Options, Window)
+	local Plugins = {}
+
+	function Plugins:Tabs(Settings)
+		return Window:Tabs({
+			Title = Settings[1],
+			Desc = Settings[2],
+			Icon = Settings[3]
+		})
+	end
+
+	function Plugins:Section(Tabs, Title)
+		return Tabs:Section({ Title = Title })
+	end
+
+	function Plugins:Button(Section, Title, Callback)
+		return Section:Button({
+			Title = Title,
+			Callback = Callback,
+		})
+	end
+
+	function Plugins:Toggle(Section, Settings, Flag, Force, Callback)
+		do
+			if Force and not Forces[Flag] then
+				table.insert(Forces, Flag)
+			end
+		end
+		
+		Options[Flag] = Section:Toggle({
+			Title = Settings[1],
+			Desc = Settings[2] or nil,
+			Value = Configuration[Flag] or false,
+			Callback = function(Value)
+				Configuration[Flag] = Value
+				EnabledOptions[Flag] = Value
+				Module['Configs']:save(Flag, Value)
+
+				if Callback then
+					Callback(Value)
+				end
+			end,
+		})
+	end
+
+	function Plugins:Slider(Section, Settings, Flag, Callback)
+		return Section:Slider({
+			Title = Settings[1],
+			Min = Settings[2],
+			Max = Settings[3],
+			Rounding = Settings[4],
+			Value = Configuration[Flag],
+			Callback = function(Value)
+				Configuration[Flag] = Value
+				Module['Configs']:save(Flag, Value)
+
+				if Callback then
+					Callback(Value)
+				end
+			end,
+		})
+	end
+	
+	function Plugins:Textbox(Section, Flag, Callback)
+		return Section:Textbox({
+			Text = tostring(Configuration[Flag]),
+			Callback = function(Value)
+				Configuration[Flag] = Value
+				Module['Configs']:save(Flag, Value)
+
+				if Callback then
+					Callback(Value)
+				end
+			end,
+		})
+	end
+	
+	function Plugins:Dropdown(Section, Title, List, Flag, Callback)
+		return Section:List({
+			Title = Title,
+			List = List,
+			Value = Configuration[Flag],
+			Multi = typeof(Configuration[Flag]) == 'table' and true or false,
+			Callback = function(Value)
+				Configuration[Flag] = Value
+				Module['Configs']:save(Flag, Value)
+
+				if Callback then
+					Callback(Value)
+				end
+			end,
+		})
+	end
+
+	return Plugins
+end
+
+Configuration = Module['Configs']:load()
+
+local Options = {}
+local clonedEnabled = {}
+local Functions = _ENV.FUNCTIONS or {}
+local FarmFunctions = _ENV.FARM_FUNCTIONS or {}
+
+local Enabled_Toggle_Debounce = false
+local Enabled_New_Values = {}
+
+local Library = Module.Importer.load("{Repository}Library/Initialized.luau")()
+
+local function UpdateEnabledOptions()
+	table.clear(FarmFunctions)
+
+	for index, value in pairs(Enabled_New_Values) do
+		clonedEnabled[index] = value or nil
+		Enabled_New_Values[index] = nil
+	end
+
+	for i = 1, #Functions do
+		local funcData = Functions[i]
+		if clonedEnabled[funcData.Name] then
+			table.insert(FarmFunctions, funcData)
+		end
+	end
+end
+
+local Enabled = _ENV.ENABLED_OPTIONS or setmetatable({}, {
+	__newindex = function(self, index, value)
+		Enabled_New_Values[index] = value or false
+
+		if not Enabled_Toggle_Debounce then
+			Enabled_Toggle_Debounce = false
+
+			task.delay(0.2, UpdateEnabledOptions)
+		end
+	end,
+	__index = clonedEnabled
+})
+
+_ENV.FUNCTIONS = Functions
+_ENV.ENABLED_OPTIONS = Enabled
+_ENV.FARM_FUNCTIONS = FarmFunctions
+
+if not _ENV.ISLOADED then
+	_ENV.ISLOADED = true
+	task.spawn(Module.Thread.RunQueue, FarmFunctions)
+end
+
+do
+	table.clear(Functions)
+
+	local index = {}
+
+	local function NewOptionQueue(Tag, Function, Confirm)
+		if Confirm ~= false then
+			local Data = { ["Name"] = Tag, ["Function"] = Function }
+
+			index[ Tag ] = Function
+			table.insert(Functions, Data)
+		end
+	end
+	
+	do
+		Module.NewOptionQueue = NewOptionQueue
+		Module.Configuration = Configuration
+		Module.Forces = Forces
+	end
+end
+
+return Module
