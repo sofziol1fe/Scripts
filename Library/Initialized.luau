@@ -201,7 +201,7 @@ local function NewTemplate(p, t, d)
 		Desc_1.BackgroundTransparency = 1
 		Desc_1.BorderColor3 = Color3.fromRGB(0,0,0)
 		Desc_1.BorderSizePixel = 0
-		Desc_1.Size = UDim2.new(0, 150,0, 10)
+		Desc_1.Size = UDim2.new(0.9, 0,0, 10)
 		Desc_1.FontFace = Font.new(
 			"rbxassetid://12187374537",
 			Enum.FontWeight.Regular,
@@ -881,7 +881,7 @@ function Library:Window(options)
 		Desc_1.BackgroundTransparency = 1
 		Desc_1.BorderColor3 = Color3.fromRGB(0,0,0)
 		Desc_1.BorderSizePixel = 0
-		Desc_1.Size = UDim2.new(0, 150,0, 10)
+		Desc_1.Size = UDim2.new(0.9, 0,0, 10)
 		Desc_1.FontFace = Font.new(
 			"rbxassetid://12187374537",
 			Enum.FontWeight.Regular,
@@ -1657,7 +1657,7 @@ function Library:Window(options)
 				Desc_1.BackgroundTransparency = 1
 				Desc_1.BorderColor3 = Color3.fromRGB(0,0,0)
 				Desc_1.BorderSizePixel = 0
-				Desc_1.Size = UDim2.new(0, 150,0, 10)
+				Desc_1.Size = UDim2.new(0.9, 0,0, 10)
 				Desc_1.FontFace = Font.new(
 					"rbxassetid://12187374537",
 					Enum.FontWeight.Regular,
