@@ -28,7 +28,7 @@ Module.Thread = (function()
 		_ENV.ISLOADED = false
 		_ENV.OnFarm = false
 
-		local text = (`redz-Hub error [ { _ENV.RunningOption or "Null" } ] { ErrorMessage }`)
+		local text = (`error [ { _ENV.RunningOption or "Null" } ] { ErrorMessage }`)
 
 		if _ENV.error_message then
 			_ENV.error_message.Text ..= `\n\n{ text }`
