@@ -502,6 +502,7 @@ do
 		Module.AddManager = AddManager 
 		Module.Colors = fontcolors
 		Module.Forces = Forces
+		Module.XOVA = { Enabled, Options }
 	end
 	
 	AddConnection(Players.LocalPlayer.Idled, function()
