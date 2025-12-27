@@ -188,7 +188,7 @@ local function NewTemplate(p, t, d)
 	Title_1.TextColor3 = Color3.fromRGB(255,255,255)
 	Title_1.TextSize = 14
 	Title_1.TextTransparency = 0.3
-	Title_1.TextWrapped = true
+	
 	Title_1.TextXAlignment = Enum.TextXAlignment.Left
 	Title_1.LayoutOrder = -999
 	
@@ -1320,7 +1320,7 @@ function Library:Window(options)
 				Title_1.TextColor3 = Color3.fromRGB(255,255,255)
 				Title_1.TextSize = 14
 				Title_1.TextTransparency = 0.30000001192092896
-				Title_1.TextWrapped = true
+				
 				Title_1.TextXAlignment = Enum.TextXAlignment.Left
 
 				UIListLayout_1.Parent = Text_1
@@ -1644,7 +1644,7 @@ function Library:Window(options)
 				Title_1.TextColor3 = Color3.fromRGB(255,255,255)
 				Title_1.TextSize = 14
 				Title_1.TextTransparency = 0.3
-				Title_1.TextWrapped = true
+				
 				Title_1.TextXAlignment = Enum.TextXAlignment.Left
 
 				UIListLayout_1.Parent = Text_1
