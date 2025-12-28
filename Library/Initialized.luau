@@ -313,43 +313,8 @@ function Library:Window(options)
 		Input_1.TextSize = 14
 		Input_1.ZIndex = 99
 
-		closeopenui = function(value)
-			if value then
-				Library:Tween({
-					v = UIScale_1,
-					t = 0.5,
-					s = "Sine",
-					d = "Out",
-					g = {Scale = 0}
-				}):Play()
-				Library:Tween({
-					v = Background_1,
-					t = 0.3,
-					s = "Back",
-					d = "In",
-					g = {Position = UDim2.new(0.5, 0, 1, 0)}
-				}):Play()
-			else
-				Library:Tween({
-					v = UIScale_1,
-					t = 0.3,
-					s = "Sine",
-					d = "Out",
-					g = {Scale = SCALER}
-				}):Play()
-				Library:Tween({
-					v = Background_1,
-					t = 0.3,
-					s = "Back",
-					d = "Out",
-					g = {Position = UDim2.new(0.5, 0,0.5, 0)}
-				}):Play()
-			end
-		end
-
 		Input_1.MouseButton1Click:Connect(function()
-			closeopenui(On)
-			On = not On
+			Background_1.Visible = not Background_1.Visible
 		end)
 	end
 
@@ -2137,7 +2102,7 @@ function Library:Window(options)
 	
 	local Large = 1.1
 	local Medium = 0.945
-	local Small = 0.9
+	local Small = 0.875
 	
 	local function TweenScale(size)
 		if size == "Large" then
