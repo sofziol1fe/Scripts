@@ -2095,7 +2095,7 @@ function Library:Window(options)
 	Library:Draggable(Background_1)
 
 	UIListLayout_1:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-		TabsScrolling_1.CanvasSize = UDim2.new(0, 0, 0, (UIListLayout_1.AbsoluteContentSize.Y + 15 / UIScale_1.Scale))
+		TabsScrolling_1.CanvasSize = UDim2.new(0, 0, 0, (UIListLayout_1.AbsoluteContentSize.Y + 30 / UIScale_1.Scale))
 	end)
 
 	UIPageLayout_1:JumpTo(Main)
@@ -2134,55 +2134,5 @@ function Library:Window(options)
 
 	return Window
 end
-
---local Window = Library:Window({
---	Title = "Xova's official",
---	Desc = "Made by s1nve"
---})
-
---local Tabs = Window:Tabs({
---	Title = "Level",
---	Desc = "Level up",
---	Icon = 89366688240346
---})
-
---local Section = Tabs:Section({
---	Title = "Section"
---})
-
---Section:Label({
---	Title = "Label",
---	Desc = "This is Label"
---})
-
---Window:Size(Section)
-
---Section:Toggle({
---	Title = 'Toggle',
---	Desc = "This is Toggle",
---	Value = false,
---	Callback = print
---})
-
---Section:Slider({
---	Title = "Slider",
---	Min = 5,
---	Max = 10,
---	Value = 7,
---	Rounding = 0,
---	Callback = print
---})
-
---Section:Textbox({
---	Text = "Text",
---	Callback = print
---})
-
---Section:Button({
---	Title = "Button",
---	Callback = function()
---		print('Click !')
---	end,
---})
 
 return Library
